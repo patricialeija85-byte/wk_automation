@@ -1,0 +1,45 @@
+pipeline {
+agent any
+tools {
+// Must match the name configured in 'Global Tool Configuration'
+maven 'Maven_3.9.x'
+jdk 'Java_17'
+}
+stages {
+stage('Checkout') {
+steps {
+// Pulls code from your repository
+checkout scm
+}
+}
+stage('Build & Compile') {
+steps {
+echo 'Compiling the wk-framework2 project...'
+sh 'mvn clean compile'
+}
+}
+stage('Execute Automation Tests') {
+steps {
+echo 'Running Cucumber Runners...'
+// This triggers the runners located in src/test/java/runners/
+sh 'mvn test -Dcucumber.options="--tags @Regression"'
+}
+}
+}
+post {
+always {
+echo 'Archiving Test Results...'
+// Captures results from Surefire (standard Maven location)
+junit '**/target/surefire-reports/*.xml'
+// If you use Cucumber Reports or Allure
+publishHTML([
+allowMissing:false, 
+alwaysLinkToLastBuild:true, 
+keepAll:true, 
+reportDir:'target/cucumber-reports', 
+reportFiles:'index.html', 
+reportName:'Cucumber Report'
+])
+}
+}
+}
