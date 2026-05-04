@@ -14,7 +14,7 @@ checkout scm
 }
 stage('Build & Compile') {
 steps {
-echo 'Compiling the wk-framework2 project...'
+echo 'Compiling the wk-framework project...'
 sh 'mvn clean compile'
 }
 }
