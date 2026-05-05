@@ -23,11 +23,18 @@ import org.junit.platform.suite.api.Suite;
  * Run by tag:
  *   mvn test -Dcucumber.filter.tags="@smoke"
  */
+
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("project/features")
-@ConfigurationParameter(key = "cucumber.glue",   value = "common.hooks,project.steps")
-@ConfigurationParameter(key = "cucumber.plugin",  value = "pretty,html:target/cucumber-reports/report.html,json:target/cucumber-reports/report.json")
+@ConfigurationParameter(key = "cucumber.glue", value = "common.hooks,project.steps")
+
+@ConfigurationParameter(
+        key = "cucumber.plugin",
+        value = "pretty, html:target/cucumber-reports/report.html, com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"
+)
+
 @ConfigurationParameter(key = "cucumber.publish.quiet", value = "true")
+@ConfigurationParameter(key = "cucumber.execution.parallel.enabled", value = "false")
 public class TestRunner {
 }

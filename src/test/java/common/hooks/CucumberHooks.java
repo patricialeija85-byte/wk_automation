@@ -37,16 +37,34 @@ public class CucumberHooks extends Steps {
     }
 
     /**
-     * Captures a screenshot if a UI test fails.
+     * Captures a screenshot if a UI or API test fails.
      */
+//    @After(order = 1)
+//    public void captureScreenshotOnFailure(Scenario scenario) {
+//        if (scenario.isFailed() && world.driver != null) {
+//            try {
+//                byte[] screenshot = ((TakesScreenshot) world.driver).getScreenshotAs(OutputType.BYTES);
+//                scenario.attach(screenshot, "image/png", "Failure - " + scenario.getName());
+//            } catch (Exception e) {
+//                System.err.println("Could not capture screenshot: " + e.getMessage());
+//            }
+//        }
+//    }
+
     @After(order = 1)
     public void captureScreenshotOnFailure(Scenario scenario) {
-        if (scenario.isFailed() && world.driver != null) {
-            try {
-                byte[] screenshot = ((TakesScreenshot) world.driver).getScreenshotAs(OutputType.BYTES);
-                scenario.attach(screenshot, "image/png", "Failure - " + scenario.getName());
-            } catch (Exception e) {
-                System.err.println("Could not capture screenshot: " + e.getMessage());
+        if (scenario.isFailed()) {
+            // If it is a UI error (active driver), attach a screenshot
+            if (world.driver != null) {
+                try {
+                    byte[] screenshot = ((TakesScreenshot) world.driver).getScreenshotAs(OutputType.BYTES);
+                    scenario.attach(screenshot, "image/png", "Screenshot of Failure");
+                } catch (Exception e) {
+                    scenario.log("Could not take screenshot: " + e.getMessage());
+                }
+            } else {
+                // If it is an API error, add a log to the Extent report
+                scenario.log("API Scenario Failed - No browser driver active.");
             }
         }
     }
@@ -61,4 +79,6 @@ public class CucumberHooks extends Steps {
             world.driver = null;
         }
     }
+
+
 }

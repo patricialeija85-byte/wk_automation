@@ -2,37 +2,47 @@ pipeline {
     agent any
 
     parameters {
-        // Allows you to choose between test.properties or preprod.properties
         choice(name: 'ENVIRONMENT', choices: ['test', 'preprod'], description: 'Select the Environment')
-
-        // Allows you to filter tests (e.g., @api, @ui, @regression)
         string(name: 'TAGS', defaultValue: '@api', description: 'Cucumber tags to execute')
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Reemplaza con la URL de tu repositorio de GitHub/Azure
+                // Initial stage to pull the latest code from GitHub
                 git branch: 'development', url: 'https://github.com/patricialeija85-byte/wk_automation'
             }
         }
 
-        stage('Build & Test') {
+        stage('Compile') {
+            steps {
+                // Separating the compilation to ensure dependencies are resolved before testing
+                bat "mvn clean compile -DskipTests"
+            }
+        }
+
+        stage('Execute Tests') {
             steps {
                 script {
-                    // Executes Maven with dynamic environment and tags
-                    // -Denv: passed to ConfigReader.java
-                    // -Dcucumber.filter.tags: passed to Cucumber Runner
-                    bat "mvn clean test -Denv=${params.ENVIRONMENT} -Dcucumber.filter.tags='${params.TAGS}'"
+                    // Running the actual test suite using your dynamic parameters
+                    bat "mvn test -Denv=${params.ENVIRONMENT} '-Dcucumber.filter.tags=${params.TAGS}'"
                 }
+            }
+        }
+
+        stage('Reports') {
+            steps {
+                // This stage will now appear in the Stage View once artifacts are archived
+                junit '**/target/surefire-reports/*.xml'
+                archiveArtifacts artifacts: 'target/ExtentReports/*.html', allowEmptyArchive: true
             }
         }
     }
 
     post {
         always {
-            // Archive Cucumber or JUnit reports if generated
-            junit '**/target/surefire-reports/*.xml'
+            // Clean up or notifications can go here
+            echo 'Pipeline execution finished.'
         }
     }
 }
