@@ -88,7 +88,6 @@ public class HomePage extends BasePage {
     /** Open the Wolters Kluwer home page. */
     public void goToHomePage() {
         navigateTo(HOME_URL);
-        driver.manage().window().maximize();
         tools.waitForLoad();
     }
 
