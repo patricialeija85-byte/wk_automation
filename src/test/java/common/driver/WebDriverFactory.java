@@ -47,16 +47,16 @@ public class WebDriverFactory {
             opts.addArguments("--headless=new");
         }
 
-        // 1. Force desktop resolution
         opts.addArguments("--window-size=1920,1080");
-
-        // 2. Apply scale factor 1 to avoid "zoomed-in" screenshots
         opts.addArguments("--force-device-scale-factor=1");
-
-        // 3. Other stability arguments
         opts.addArguments("--start-maximized", "--disable-notifications", "--disable-popup-blocking");
 
-        return new ChromeDriver(opts);
+        WebDriver driver = new ChromeDriver(opts);
+
+        // ADD THIS LINE: This forces the size directly into the driver instance
+        driver.manage().window().setSize(new org.openqa.selenium.Dimension(1920, 1080));
+
+        return driver;
     }
 
     private WebDriver createFirefoxDriver() {
