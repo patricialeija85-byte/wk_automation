@@ -2,33 +2,33 @@ pipeline {
     agent any
 
     /*
-       Defines the tools configured in 'Manage Jenkins > Tools'.
-       The names inside quotes MUST match the 'Name' field you gave them in Jenkins.
+       Global Tool Configuration:
+       Ensures the pipeline uses your specific Azul Zulu 17 and Maven installations.
     */
     tools {
-        jdk 'Azul-17'   // Replace with the name you gave to your Azul Zulu 17 installation
-        maven 'Maven_Latest' // Replace with the name you gave to your Maven installation
+        jdk 'Azul-17'   // Must match the Name in 'Manage Jenkins > Tools'
+        maven 'Maven_Latest' // Must match the Name in 'Manage Jenkins > Tools'
     }
 
     parameters {
-        // Allows you to choose between test.properties or preprod.properties
-        choice(name: 'ENVIRONMENT', choices: ['test', 'preprod'], description: 'Select the Environment')
+        // Dynamic environment selection
+        choice(name: 'ENVIRONMENT', choices: ['test', 'preprod'], description: 'Select the target environment')
 
-        // Allows you to filter tests (e.g., @api, @ui, @regression)
-        string(name: 'TAGS', defaultValue: '@api', description: 'Cucumber tags to execute')
+        // Dynamic Cucumber tag filtering
+        string(name: 'TAGS', defaultValue: '@api', description: 'Enter Cucumber tags to execute (e.g., @api, @regression)')
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // GitHub repository checkout
+                // Pulling latest code from your repository
                 git branch: 'development', url: 'https://github.com/patricialeija85-byte/wk_automation'
             }
         }
 
         stage('Compile') {
             steps {
-                // Compiles the project without running tests to ensure dependencies are fine
+                // Fast-fail if the code has compilation errors
                 bat "mvn clean compile -DskipTests"
             }
         }
@@ -37,32 +37,45 @@ pipeline {
             steps {
                 script {
                     /*
-                       Executes Maven with your parameters.
-                       Using double quotes for PowerShell/CMD compatibility in Jenkins.
+                       Running Maven tests with parameters.
+                       Escaped double quotes are used for Windows CMD compatibility.
                     */
                     bat "mvn test -Denv=${params.ENVIRONMENT} \"-Dcucumber.filter.tags=${params.TAGS}\""
                 }
             }
         }
-
-        stage('Reports') {
-            steps {
-                // Publish JUnit results and archive the Extent Report
-                junit '**/target/surefire-reports/*.xml'
-                archiveArtifacts artifacts: 'target/ExtentReports/*.html', allowEmptyArchive: true
-            }
-        }
     }
 
+    /*
+       Post-execution actions:
+       This block runs regardless of whether the stages succeeded or failed.
+    */
     post {
         always {
-            echo 'Pipeline execution finished.'
+            script {
+                // 1. Process JUnit XML results for the 'Tests' trend chart.
+                junit '**/target/surefire-reports/*.xml'
+
+                // 2. Publish the Extent Report to the side menu.
+                publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'target/ExtentReports',
+                        reportFiles: 'SparkReport.html',
+                        reportName: 'Extent Report'
+                ])
+
+                // 3. Backup the report as a build artifact.
+                archiveArtifacts artifacts: 'target/ExtentReports/*.html', allowEmptyArchive: true
+            }
+            echo 'Pipeline execution complete. Review the Extent Report for details.'
         }
         success {
-            echo 'Tests passed successfully!'
+            echo 'Build Successful: All Wolters Kluwer tests passed!'
         }
         failure {
-            echo 'Pipeline failed. Check the logs and Extent Report.'
+            echo 'Build Failed: One or more tests failed. Please check the Extent Report.'
         }
     }
 }
