@@ -22,20 +22,30 @@ public class CucumberHooks extends Steps {
      * This hook only runs for scenarios tagged with @ui.
      * It initializes the WebDriver for browser-based testing.
      */
+
     @Before(value = "@ui", order = 0)
     public void setUpUI() {
         world.driver = new WebDriverFactory().getDriver();
+        ConfigReader config = new ConfigReader();
+        world.driver.get(config.getUiBaseUrl());
+    }
+
+    @Before(value = "@api", order = 0)
+    public void setUpAPI() {
+        ConfigReader config = new ConfigReader();
+        RestAssured.baseURI = config.getApiBaseUrl();
     }
 
     /**
      * This hook only runs for scenarios tagged with @api.
      * It configures RestAssured using settings from the active environment properties.
      */
-    @Before(value = "@api", order = 0)
-    public void setUpAPI() {
-        // Dynamically sets the RestAssured base URI based on the -Denv parameter
-        RestAssured.baseURI = ConfigReader.getProperty("base.url.api");
-    }
+//    @Before(value = "@api", order = 0)
+//    public void setUpAPI() {
+//        // Dynamically sets the RestAssured base URI based on the -Denv parameter
+//        RestAssured.baseURI = ConfigReader.getProperty("base.url.api");
+//    }
+
 
     /**
      * Captures a screenshot if a UI or API test fails.

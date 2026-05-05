@@ -1,5 +1,6 @@
 package project.pages;
 
+import common.config.ConfigReader;
 import common.pages.BasePage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -13,12 +14,16 @@ import org.openqa.selenium.support.FindBy;
  */
 public class HomePage extends BasePage {
 
-    public static final String HOME_URL = "https://www.wolterskluwer.com/en";
+    private ConfigReader config = new ConfigReader();
+    private final String HOME_URL = config.getUiBaseUrl();
 
     // ── Header ────────────────────────────────────────────────────────────────
 
     @FindBy(css = "a.logo, a[href='/en'] img, header a[aria-label*='Wolters']")
     private WebElement wkLogo;
+
+    @FindBy(id ="Main-Menu")
+    private WebElement mainMenu;
 
     @FindBy(xpath = "//button[contains(.,'Solutions') or contains(.,'Products')]")
     private WebElement solutionsMenuButton;
@@ -88,7 +93,9 @@ public class HomePage extends BasePage {
     /** Open the Wolters Kluwer home page. */
     public void goToHomePage() {
         navigateTo(HOME_URL);
-        tools.waitForLoad();
+        tools.waitForLoad(); // Ensure page is ready
+        driver.manage().window().maximize();
+        tools.waitForElementVisible(mainMenu, DEFAULT_TIMEOUT);
     }
 
     /** Click the Solutions & Products menu button in the header. */

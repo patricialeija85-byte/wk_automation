@@ -11,7 +11,7 @@ public class ApiSteps {
 
     @Given("the search API is available")
     public void checkApiAvailability() {
-        // BaseURI is handled by Hooks.java calling ConfigReader.
+        // BaseURI is handled by CucumberHooks.java calling ConfigReader.
     }
 
     @When("I search for {string} via API")

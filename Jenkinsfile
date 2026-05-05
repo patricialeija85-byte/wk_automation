@@ -54,7 +54,7 @@ pipeline {
         always {
             script {
                 // 1. Process JUnit XML results for the 'Tests' trend chart.
-                junit '**/target/surefire-reports/*.xml'
+                //junit '**/target/surefire-reports/*.xml'
 
                 // 2. Publish the Extent Report to the side menu.
                 publishHTML([
