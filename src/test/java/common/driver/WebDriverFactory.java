@@ -43,25 +43,30 @@ public class WebDriverFactory {
         WebDriverManager.chromedriver().setup();
         ChromeOptions opts = new ChromeOptions();
 
-        // 1. Use the new headless mode which supports window sizing better
         if (headless) {
+            // Use the modern headless mode for better resolution support
             opts.addArguments("--headless=new");
         }
 
-        // 2. Force the resolution via arguments
+        // 1. Force the resolution via arguments
         opts.addArguments("--window-size=1920,1080");
         opts.addArguments("--force-device-scale-factor=1");
 
-        // 3. SET A DESKTOP USER-AGENT: This is the most likely reason for the mobile view.
-        // Without this, the server sees "HeadlessChrome" and serves the simplified UI.
+        // 2. BYPASS AUTOMATION DETECTION (Crucial for Wolters Kluwer)
+        // This hides the "Chrome is being controlled by automated software" flag
+        opts.addArguments("--disable-blink-features=AutomationControlled");
+        opts.setExperimentalOption("excludeSwitches", java.util.Collections.singletonList("enable-automation"));
+        opts.setExperimentalOption("useAutomationExtension", false);
+
+        // 3. Set a real Desktop User-Agent
         opts.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36");
 
-        // 4. Disable info-bars and notifications that can shrink the viewport
+        // 4. General stability arguments
         opts.addArguments("--disable-infobars", "--disable-notifications", "--disable-popup-blocking");
 
         WebDriver driver = new ChromeDriver(opts);
 
-        // 5. Hard-code the size into the active driver instance
+        // 5. Hard-code the window size into the active driver instance
         driver.manage().window().setSize(new org.openqa.selenium.Dimension(1920, 1080));
 
         return driver;
