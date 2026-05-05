@@ -31,11 +31,31 @@ public class WebDriverFactory {
         }
     }
 
+//    private WebDriver createChromeDriver() {
+//        WebDriverManager.chromedriver().setup();
+//        ChromeOptions opts = new ChromeOptions();
+//        if (headless) opts.addArguments("--headless=new");
+//        opts.addArguments("--start-maximized", "--disable-notifications", "--disable-popup-blocking");
+//        return new ChromeDriver(opts);
+//    }
+
     private WebDriver createChromeDriver() {
         WebDriverManager.chromedriver().setup();
         ChromeOptions opts = new ChromeOptions();
-        if (headless) opts.addArguments("--headless=new");
+
+        if (headless) {
+            opts.addArguments("--headless=new");
+        }
+
+        // 1. Force desktop resolution
+        opts.addArguments("--window-size=1920,1080");
+
+        // 2. Apply scale factor 1 to avoid "zoomed-in" screenshots
+        opts.addArguments("--force-device-scale-factor=1");
+
+        // 3. Other stability arguments
         opts.addArguments("--start-maximized", "--disable-notifications", "--disable-popup-blocking");
+
         return new ChromeDriver(opts);
     }
 
