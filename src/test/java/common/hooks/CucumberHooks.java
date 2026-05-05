@@ -61,23 +61,23 @@ public class CucumberHooks extends Steps {
         }
     }
 
-    @After(order = 1)
-    public void captureScreenshotOnFailure(Scenario scenario) {
-        if (scenario.isFailed()) {
-            // If it is a UI error (active driver), attach a screenshot
-            if (world.driver != null) {
-                try {
-                    byte[] screenshot = ((TakesScreenshot) world.driver).getScreenshotAs(OutputType.BYTES);
-                    scenario.attach(screenshot, "image/png", "Screenshot of Failure");
-                } catch (Exception e) {
-                    scenario.log("Could not take screenshot: " + e.getMessage());
-                }
-            } else {
-                // If it is an API error, add a log to the Extent report
-                scenario.log("API Scenario Failed - No browser driver active.");
-            }
-        }
-    }
+//    @After(order = 1)
+//    public void captureScreenshotOnFailure(Scenario scenario) {
+//        if (scenario.isFailed()) {
+//            // If it is a UI error (active driver), attach a screenshot
+//            if (world.driver != null) {
+//                try {
+//                    byte[] screenshot = ((TakesScreenshot) world.driver).getScreenshotAs(OutputType.BYTES);
+//                    scenario.attach(screenshot, "image/png", "Screenshot of Failure");
+//                } catch (Exception e) {
+//                    scenario.log("Could not take screenshot: " + e.getMessage());
+//                }
+//            } else {
+//                // If it is an API error, add a log to the Extent report
+//                scenario.log("API Scenario Failed - No browser driver active.");
+//            }
+//        }
+//    }
 
     /**
      * Closes the browser only if a driver was actually instantiated.
