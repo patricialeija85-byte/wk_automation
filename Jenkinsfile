@@ -12,8 +12,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Get code from your repository
-                checkout scm
+                // Reemplaza con la URL de tu repositorio de GitHub/Azure
+                git branch: 'development', url: 'https://github.com/patricialeija85-byte/wk_automation'
             }
         }
 
