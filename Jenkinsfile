@@ -1,45 +1,38 @@
 pipeline {
     agent any
-    tools {
-// Must match the name configured in 'Global Tool Configuration'
-        maven 'Maven_3.9.x'
-        jdk 'Java_17'
+
+    parameters {
+        // Allows you to choose between test.properties or preprod.properties
+        choice(name: 'ENVIRONMENT', choices: ['test', 'preprod'], description: 'Select the Environment')
+
+        // Allows you to filter tests (e.g., @api, @ui, @regression)
+        string(name: 'TAGS', defaultValue: '@api', description: 'Cucumber tags to execute')
     }
+
     stages {
         stage('Checkout') {
             steps {
-// Pulls code from your repository
+                // Get code from your repository
                 checkout scm
             }
         }
-        stage('Build & Compile') {
+
+        stage('Build & Test') {
             steps {
-                echo 'Compiling the wk-framework project...'
-                sh 'mvn clean compile'
-            }
-        }
-        stage('Execute Automation Tests') {
-            steps {
-                echo 'Running Cucumber Runners...'
-// This triggers the runners located in src/test/java/runners/
-                sh 'mvn test -Dcucumber.options="--tags @Regression"'
+                script {
+                    // Executes Maven with dynamic environment and tags
+                    // -Denv: passed to ConfigReader.java
+                    // -Dcucumber.filter.tags: passed to Cucumber Runner
+                    sh "mvn clean test -Denv=${params.ENVIRONMENT} -Dcucumber.filter.tags='${params.TAGS}'"
+                }
             }
         }
     }
+
     post {
         always {
-            echo 'Archiving Test Results...'
-// Captures results from Surefire (standard Maven location)
+            // Archive Cucumber or JUnit reports if generated
             junit '**/target/surefire-reports/*.xml'
-// If you use Cucumber Reports or Allure
-            publishHTML([
-                    allowMissing         : false,
-                    alwaysLinkToLastBuild: true,
-                    keepAll              : true,
-                    reportDir            : 'target/cucumber-reports',
-                    reportFiles          : 'index.html',
-                    reportName           : 'Cucumber Report'
-            ])
         }
     }
 }

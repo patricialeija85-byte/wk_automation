@@ -1,3 +1,4 @@
+@ui
 Feature: Wolters Kluwer About Us Page
   As a user interested in learning about Wolters Kluwer as a company
   I want to visit the About Us section
