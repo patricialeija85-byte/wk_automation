@@ -51,6 +51,16 @@ public class CucumberHooks extends Steps {
 //        }
 //    }
 
+    @After
+    public void tearDown(Scenario scenario) {
+        if (scenario.isFailed()) {
+            // Take screenshot as Base64 string
+            final byte[] screenshot = ((TakesScreenshot) world.driver).getScreenshotAs(OutputType.BYTES);
+            // Attach it to the scenario - Extent Adapter will embed it automatically
+            scenario.attach(screenshot, "image/png", "Screenshot of Failure");
+        }
+    }
+
     @After(order = 1)
     public void captureScreenshotOnFailure(Scenario scenario) {
         if (scenario.isFailed()) {
