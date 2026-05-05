@@ -23,7 +23,7 @@ pipeline {
                     // Executes Maven with dynamic environment and tags
                     // -Denv: passed to ConfigReader.java
                     // -Dcucumber.filter.tags: passed to Cucumber Runner
-                    sh "mvn clean test -Denv=${params.ENVIRONMENT} -Dcucumber.filter.tags='${params.TAGS}'"
+                    bat "mvn clean test -Denv=${params.ENVIRONMENT} -Dcucumber.filter.tags='${params.TAGS}'"
                 }
             }
         }
