@@ -23,7 +23,7 @@ public class HomePage extends BasePage {
     @FindBy(xpath = "//button[contains(.,'Solutions') or contains(.,'Products')]")
     private WebElement solutionsMenuButton;
 
-    @FindBy(xpath = "//nav//a[contains(@href,'/en/about-us')]")
+    @FindBy(xpath = "//button[contains(text(),'About Us')]")
     private WebElement aboutUsNavLink;
 
     @FindBy(xpath = "//nav//a[contains(@href,'/en/insights') or contains(text(),'Insights')]")
