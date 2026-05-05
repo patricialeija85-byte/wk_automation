@@ -5,6 +5,7 @@ import common.driver.WebDriverFactory;
 import common.steps.Steps;
 import common.steps.World;
 import io.cucumber.java.After;
+import io.cucumber.java.AfterStep;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.restassured.RestAssured;
@@ -61,28 +62,28 @@ public class CucumberHooks extends Steps {
 //        }
 //    }
 
-    @After
-    public void tearDown(Scenario scenario) {
-        if (scenario.isFailed()) {
-            try {
-                // 1. Get the driver instance from your configuration/driver class.
-                // Note: Ensure you are using the correct reference (e.g., world.driver or DriverManager.getDriver()).
-                byte[] screenshot = ((TakesScreenshot) world.driver).getScreenshotAs(OutputType.BYTES);
-
-                // 2. Attach the screenshot to the Cucumber scenario.
-                // The Extent Reports adapter will detect this and embed the image directly into the report.
-                scenario.attach(screenshot, "image/png", "Screenshot of Failure");
-
-            } catch (Exception e) {
-                System.err.println("Could not take screenshot: " + e.getMessage());
-            }
-        }
-
-        // Close the driver instance if it is not handled elsewhere in your framework.
-        if (world.driver != null) {
-            world.driver.quit();
-        }
-    }
+//    @After
+//    public void tearDown(Scenario scenario) {
+//        if (scenario.isFailed()) {
+//            try {
+//                // 1. Get the driver instance from your configuration/driver class.
+//                // Note: Ensure you are using the correct reference (e.g., world.driver or DriverManager.getDriver()).
+//                byte[] screenshot = ((TakesScreenshot) world.driver).getScreenshotAs(OutputType.BYTES);
+//
+//                // 2. Attach the screenshot to the Cucumber scenario.
+//                // The Extent Reports adapter will detect this and embed the image directly into the report.
+//                scenario.attach(screenshot, "image/png", "Screenshot of Failure");
+//
+//            } catch (Exception e) {
+//                System.err.println("Could not take screenshot: " + e.getMessage());
+//            }
+//        }
+//
+//        // Close the driver instance if it is not handled elsewhere in your framework.
+//        if (world.driver != null) {
+//            world.driver.quit();
+//        }
+//    }
 
 //    @After(order = 1)
 //    public void captureScreenshotOnFailure(Scenario scenario) {
@@ -102,6 +103,22 @@ public class CucumberHooks extends Steps {
 //        }
 //    }
 
+
+    @AfterStep
+    public void takeScreenshotAfterEachStep(Scenario scenario) {
+        try {
+            // Capturing the screenshot for every step (Passed or Failed)
+            byte[] screenshot = ((TakesScreenshot) world.driver).getScreenshotAs(OutputType.BYTES);
+
+            // Attaching it to the scenario using Base64 to avoid broken images in Jenkins
+            scenario.attach(screenshot, "image/png", "Step Screenshot");
+
+        } catch (Exception e) {
+            System.err.println("Failed to capture step screenshot: " + e.getMessage());
+        }
+    }
+
+
     /**
      * Closes the browser only if a driver was actually instantiated.
      */
@@ -112,6 +129,5 @@ public class CucumberHooks extends Steps {
             world.driver = null;
         }
     }
-
 
 }
