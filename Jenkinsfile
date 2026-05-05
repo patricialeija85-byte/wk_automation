@@ -40,7 +40,7 @@ pipeline {
                        Executes Maven with your parameters.
                        Using double quotes for PowerShell/CMD compatibility in Jenkins.
                     */
-                    bat "mvn test -Denv=${params.ENVIRONMENT} '-Dcucumber.filter.tags=${params.TAGS}'"
+                    bat "mvn test -Denv=${params.ENVIRONMENT} \"-Dcucumber.filter.tags=${params.TAGS}\""
                 }
             }
         }
