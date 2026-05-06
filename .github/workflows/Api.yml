@@ -1,4 +1,4 @@
-name: Automation CI
+name: Api Testing
 
 on:
   push:
@@ -20,4 +20,4 @@ jobs:
           cache: 'maven'
 
       - name: Run Automation Tests
-        run: mvn test -Dheadless=true -Dbrowser=chrome -Dcucumber.filter.tags="@apiTest1"
+        run: mvn test -Dheadless=true -Dbrowser=chrome -Dcucumber.filter.tags="@api"
