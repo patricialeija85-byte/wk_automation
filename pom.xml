@@ -101,8 +101,7 @@
         <dependency>
             <groupId>tech.grasshopper</groupId>
             <artifactId>extentreports-cucumber7-adapter</artifactId>
-            <version>1.14.0</version>
-            <scope>compile</scope>
+            <version>1.14.0</version> <!-- Use the latest version -->
         </dependency>
 
         <!-- API Testing -->

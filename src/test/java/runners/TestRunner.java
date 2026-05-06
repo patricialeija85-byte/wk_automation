@@ -33,7 +33,6 @@ import org.junit.platform.suite.api.Suite;
         key = "cucumber.plugin",
         value = "pretty, html:target/cucumber-reports/report.html, com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"
 )
-
 @ConfigurationParameter(key = "cucumber.publish.quiet", value = "true")
 @ConfigurationParameter(key = "cucumber.execution.parallel.enabled", value = "false")
 public class TestRunner {
