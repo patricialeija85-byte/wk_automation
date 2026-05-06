@@ -19,5 +19,5 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Run Headless Tests
-        run: mvn test
+      - name: Run Automation Tests
+        run: mvn test -Dheadless=true -Dbrowser=chrome
