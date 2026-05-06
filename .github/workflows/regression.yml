@@ -21,3 +21,10 @@ jobs:
 
       - name: Run Automation Tests
         run: mvn test -Dheadless=true -Dbrowser=chrome -Dcucumber.filter.tags="@regression"
+
+      - name: Upload Extent Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: extent-report-automation
+          path: target/extent-reports/
+          retention-days: 30
