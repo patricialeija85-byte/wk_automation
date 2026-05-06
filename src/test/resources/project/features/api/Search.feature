@@ -2,7 +2,7 @@
 Feature: Wolters Kluwer Search API
   As a user, I want to verify that the search service returns valid compliance and testing results.
 
-  @test @preprod
+  @apiTest1 @preprod
   Scenario: Validate search results for software testing
     Given the search API is available
     When I search for "software testing" via API
