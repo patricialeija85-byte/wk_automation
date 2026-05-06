@@ -20,4 +20,4 @@ jobs:
           cache: 'maven'
 
       - name: Run Automation Tests
-        run: mvn test -Dheadless=true -Dbrowser=chrome
+        run: mvn test -Dheadless=true -Dbrowser=chrome -Dcucumber.filter.tags="@apiTest1"
