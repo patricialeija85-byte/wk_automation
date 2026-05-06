@@ -1,4 +1,4 @@
-name: Automated regression
+name: Regression Testing
 
 on:
   push:
